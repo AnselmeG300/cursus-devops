@@ -2,12 +2,24 @@
 VERSION_STRING="5:25.0.3-1~ubuntu.22.04~jammy"
 ENABLE_ZSH=true
 
+# Supprimer complètement les dialogues interactifs
+export NEEDRESTART_MODE=a  # auto → redémarre les services automatiquement
+export DEBIAN_FRONTEND=noninteractive
+export NEEDRESTART_SUSPEND=1
+
+# Dire à dpkg de toujours garder la version locale en cas de conflit de config
+export UCF_FORCE_CONFFOLD=1
+
 # Mise à jour du système
-echo 
+echo
 echo "[INFO] Mise à jour du système"
 echo
 sudo apt update
-sudo apt upgrade -y
+sudo -E apt -y \
+  -o Dpkg::Options::="--force-confold" \
+  -o Dpkg::Options::="--force-confdef" \
+  -o "APT::Get::Assume-Yes=true" \
+  upgrade
 
 # Installation des paquets nécessaires
 
